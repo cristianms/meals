@@ -1,11 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:meals/data/dummy_data.dart';
+import 'package:meals/models/meal.dart';
+import 'package:meals/models/settings.dart';
 import 'package:meals/screens/categories_meals_screen.dart';
-import 'package:meals/screens/categories_screen.dart';
+import 'package:meals/screens/meal_detail_screen.dart';
+import 'package:meals/screens/settings_screen.dart';
+import 'package:meals/screens/tabs_screen.dart';
 import 'package:meals/utils/app_routes.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  // Configurações do usuário/filtros
+  Settings _settings = Settings();
+  // Refeições disponíveis, a partir do arquivo DUMMY
+  List<Meal> _availableMeals = DUMMY_MEALS;
+
+  // Método para ser chamado no filtro/tela de configurações, enviado para a tela de configurações
+  void _filterMeals(Settings settings) {
+    setState(() {
+      // Atualiza a lista de refeições disponíveis
+      this._availableMeals = DUMMY_MEALS.where((meal) {
+        final filterGluten = settings.isGlutenFree && !meal.isGlutenFree;
+        final filterLactose = settings.isLactoseFree && !meal.isLactoseFree;
+        final filterVegan = settings.isVegan && !meal.isVegan;
+        final filterVegetarian = settings.isVegetarian && !meal.isVegetarian;
+        return !filterGluten &&
+            !filterLactose &&
+            !filterVegan &&
+            !filterVegetarian;
+      }).toList();
+      // Atualiza o settings centralizado do app
+      this._settings = settings;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -23,9 +57,27 @@ class MyApp extends StatelessWidget {
             ),
       ),
       routes: {
-        AppRoutes.HOME: (_) => CategoriesScreen(),
-        AppRoutes.CATEGORIES_MEALS: (_) => CategoriesMealsScreen(),
+        AppRoutes.HOME: (_) => TabsScreen(),
+        AppRoutes.CATEGORIES_MEALS: (_) =>
+            CategoriesMealsScreen(_availableMeals),
+        AppRoutes.MEAL_DETAIL: (_) => MealDetailScreen(),
+        AppRoutes.SETTINGS: (_) => SettingsScreen(_settings, _filterMeals),
       },
+      //
+      // // Sempre ao gerar uma rota esse método é chama e tratamentos podem ser feitos aqui
+      // onGenerateRoute: (settings) {
+      //   if (settings.name == '/alguma-coisa') {
+      //     return null;
+      //   } else {
+      //     return MaterialPageRoute(builder: (_) => CategoriesScreen());
+      //   }
+      // },
+      //
+      // // Cairá nesse método quando não encontrar a rota especificada
+      // onUnknownRoute: (settings) {
+      //   return MaterialPageRoute(builder: (_) => CategoriesScreen());
+      // },
+      //
     );
   }
 }
