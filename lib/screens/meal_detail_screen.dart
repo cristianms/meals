@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:meals/models/meal.dart';
 
+/// Tela de detalhes da receita
 class MealDetailScreen extends StatelessWidget {
+  /// Parâmetro função para ser utilizada no botão de favoritar
+  final Function(Meal) onToggleFavorite;
+  /// Método para validar se a refeiçõa é favorita
+  final Function(Meal) isFavorite;
+
+  /// Construtor
+  const MealDetailScreen(this.onToggleFavorite, this.isFavorite);
+
   @override
   Widget build(BuildContext context) {
     final Meal meal = ModalRoute.of(context).settings.arguments as Meal;
@@ -62,9 +71,9 @@ class MealDetailScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.star),
+        child: Icon(this.isFavorite(meal) ? Icons.star : Icons.star_border),
         onPressed: () {
-          Navigator.of(context).pop(meal.title);
+          onToggleFavorite(meal);
         },
       ),
     );

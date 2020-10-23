@@ -8,6 +8,7 @@ import 'package:meals/screens/settings_screen.dart';
 import 'package:meals/screens/tabs_screen.dart';
 import 'package:meals/utils/app_routes.dart';
 
+/// Ponto de entrada do app
 void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
@@ -16,12 +17,16 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  // Configurações do usuário/filtros
+  /// Configurações do usuário/filtros
   Settings _settings = Settings();
-  // Refeições disponíveis, a partir do arquivo DUMMY
+
+  /// Refeições disponíveis, a partir do arquivo DUMMY
   List<Meal> _availableMeals = DUMMY_MEALS;
 
-  // Método para ser chamado no filtro/tela de configurações, enviado para a tela de configurações
+  /// Refeições marcadas como favoritas
+  List<Meal> _favoriteMeals = [];
+
+  /// Método para ser chamado no filtro/tela de configurações, enviado para a tela de configurações
   void _filterMeals(Settings settings) {
     setState(() {
       // Atualiza a lista de refeições disponíveis
@@ -38,6 +43,20 @@ class _MyAppState extends State<MyApp> {
       // Atualiza o settings centralizado do app
       this._settings = settings;
     });
+  }
+
+  /// Adiciona ou remove favorito
+  void _toggleFavorite(Meal meal) {
+    setState(() {
+      _favoriteMeals.contains(meal)
+          ? _favoriteMeals.remove(meal)
+          : _favoriteMeals.add(meal);
+    });
+  }
+
+  /// Verifica se um item consta entre os favoritos do usuário
+  bool _isFavorite(Meal meal) {
+    return _favoriteMeals.contains(meal);
   }
 
   @override
@@ -57,10 +76,11 @@ class _MyAppState extends State<MyApp> {
             ),
       ),
       routes: {
-        AppRoutes.HOME: (_) => TabsScreen(),
+        AppRoutes.HOME: (_) => TabsScreen(_favoriteMeals),
         AppRoutes.CATEGORIES_MEALS: (_) =>
             CategoriesMealsScreen(_availableMeals),
-        AppRoutes.MEAL_DETAIL: (_) => MealDetailScreen(),
+        AppRoutes.FAVORITE_MEALS: (_) => CategoriesMealsScreen(_availableMeals),
+        AppRoutes.MEAL_DETAIL: (_) => MealDetailScreen(_toggleFavorite, _isFavorite),
         AppRoutes.SETTINGS: (_) => SettingsScreen(_settings, _filterMeals),
       },
       //

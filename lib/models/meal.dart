@@ -54,6 +54,11 @@ class Meal {
     }
     return 'Desconhecido';
   }
+  
+  @override
+  String toString() {
+    return this.title;
+  }
 }
 
 enum Complexity {

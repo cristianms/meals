@@ -3,9 +3,11 @@ import 'package:meals/components/meal_item.dart';
 import 'package:meals/models/category.dart';
 import 'package:meals/models/meal.dart';
 
+/// Tela para apresentar as refeições marcadas como favorita
 class CategoriesMealsScreen extends StatelessWidget {
+  /// Lista de refeições favoritas
   final List<Meal> meals;
-
+  /// Construtor
   const CategoriesMealsScreen(this.meals);
 
   @override

@@ -1,20 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:meals/components/main_drawer.dart';
+import 'package:meals/models/meal.dart';
 import 'package:meals/screens/categories_screen.dart';
 import 'package:meals/screens/favorite_screen.dart';
 
+/// Widget principal da home, que possui o gerenciamento das abas
 class TabsScreen extends StatefulWidget {
+  /// Lista de receitas favoritas recebidas da main
+  final List<Meal> favoriteMeals;
+
+  /// Construtor
+  const TabsScreen(this.favoriteMeals);
+
   @override
   _TabsScreenState createState() => _TabsScreenState();
 }
 
 class _TabsScreenState extends State<TabsScreen> {
+  /// Índice de inicialização das tabs
   int _selectedScreenIndex = 0;
-  final List<Map<String, Object>> _screens = [
-    {'title': 'Categorias', 'screen': CategoriesScreen()},
-    {'title': 'Meus favoritos', 'screen': FavoriteScreen()},
-  ];
 
+  /// Inicializa as telas utilizadas como tabs, o conteúdo é preenchido no iniState
+  /// pois neste ponto não é possível obter o parâmetro widget.favoriteMeals (lista de favoritos)
+  List<Map<String, Object>> _screens = [];
+
+  /// Inicializa o estado do widget
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _screens = [
+        {
+          'title': 'Categorias',
+          'screen': CategoriesScreen(),
+        },
+        {
+          'title': 'Meus favoritos',
+          'screen': FavoriteScreen(widget.favoriteMeals),
+        },
+      ];
+    });
+  }
+
+  /// Método utilizado para alterar a tab selecionada
   void _selectTab(int tabIndex) {
     setState(() {
       _selectedScreenIndex = tabIndex;

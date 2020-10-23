@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:meals/models/category.dart';
 import 'package:meals/utils/app_routes.dart';
 
+/// Item de categoria, utilizado na home do app
 class CategoryItem extends StatelessWidget {
+  /// Categoria recebida por parâmetro
   final Category category;
+  /// Construtor
   const CategoryItem(this.category);
 
   @override
